@@ -13,4 +13,13 @@ export class RegisterPage {
   registerButton = this.page.getByTestId('register-button');
   alertPopup = this.page.getByTestId('alert-popup');
   successfulRegisterText = 'User created';
+
+  async fillRegistrationForm(user) {
+    await this.firstNameInput.fill(user.firstName);
+    await this.lastNameInput.fill(user.lastName);
+    await this.emailInput.fill(user.email);
+    await this.birthdateInput.fill(user.dateOfBirth);
+    await this.closeCalendarButton.click();
+    await this.passwordInput.fill(user.password);
+  }
 }

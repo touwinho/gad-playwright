@@ -8,4 +8,9 @@ export class LoginPage {
   passwordInput = this.page.locator("input[name='password']");
   submitButton = this.page.locator("input[type='submit']");
   successLoginRedirect = '/welcome';
+
+  async fillLoginForm(email, password) {
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+  }
 }
