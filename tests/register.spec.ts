@@ -5,26 +5,30 @@ import { LoginPage } from '../pages/login.page';
 import { WelcomePage } from '../pages/welcome.page';
 
 test.describe('Register new account', () => {
-  const date = faker.date.past();
-  const dateOfBirth = date.toISOString().split('T')[0];
+  test.describe.configure({ mode: 'serial' });
 
-  const firstName = faker.person.firstName();
-  const lastName = faker.person.lastName();
-  const email = faker.internet.email();
-  const password = faker.internet.password();
+  const user = {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    dateOfBirth: faker.date.past().toISOString().split('T')[0]
+  };
 
-  test('should create account', async ({ page }) => {
-    const registerPage = new RegisterPage(page);
-    const loginPage = new LoginPage(page);
+  let registerPage: RegisterPage;
+  let loginPage: LoginPage;
+  let welcomePage: WelcomePage;
 
+  test.beforeEach(async ({ page }) => {
+    registerPage = new RegisterPage(page);
+    loginPage = new LoginPage(page);
+    welcomePage = new WelcomePage(page);
+  });
+
+  test('should create a new user account successfully', async ({ page }) => {
     await page.goto(registerPage.url);
 
-    await registerPage.firstNameInput.fill(firstName);
-    await registerPage.lastNameInput.fill(lastName);
-    await registerPage.emailInput.fill(email);
-    await registerPage.birthdateInput.fill(dateOfBirth);
-    await registerPage.closeCalendarButton.click();
-    await registerPage.passwordInput.fill(password);
+    await registerPage.fillRegistrationForm(user);
     await registerPage.registerButton.click();
 
     await expect(registerPage.alertPopup).toHaveText(
@@ -34,18 +38,14 @@ test.describe('Register new account', () => {
     await expect(page).toHaveURL(loginPage.url);
   });
 
-  test('should login on created account', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const welcomePage = new WelcomePage(page);
-
+  test('should login on recently created account', async ({ page }) => {
     await page.goto(loginPage.url);
 
-    await loginPage.emailInput.fill(email);
-    await loginPage.passwordInput.fill(password);
+    await loginPage.fillLoginForm(user.email, user.password);
     await loginPage.submitButton.click();
 
     await expect(page).toHaveURL(welcomePage.url);
 
-    await expect(welcomePage.welcomeText).toHaveText(`Hi ${email}!`);
+    await expect(welcomePage.welcomeText).toHaveText(`Hi ${user.email}!`);
   });
 });
