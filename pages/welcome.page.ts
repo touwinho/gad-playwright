@@ -1,8 +1,15 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class WelcomePage {
-  constructor(private page: Page) {}
+  readonly page: Page;
+  readonly url: string;
+  readonly title: string;
+  readonly welcomeText: Locator;
 
-  url = '/welcome';
-  welcomeText = this.page.getByTestId('hello');
+  constructor(page: Page) {
+    this.page = page;
+    this.url = '/welcome';
+    this.title = '🦎 GAD | Welcome';
+    this.welcomeText = this.page.getByTestId('hello');
+  }
 }
