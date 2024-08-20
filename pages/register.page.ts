@@ -1,8 +1,10 @@
 import { Page, Locator } from '@playwright/test';
-import { TUser } from '../types/user';
+import { IUser } from '../interfaces';
 
 export class RegisterPage {
-  readonly url: string = '/register.html';
+  readonly url = '/register.html';
+  readonly title = '🦎 GAD | Register';
+  readonly successfulRegisterText = 'User created';
   readonly firstNameInput: Locator;
   readonly lastNameInput: Locator;
   readonly emailInput: Locator;
@@ -10,7 +12,6 @@ export class RegisterPage {
   readonly closeCalendarButton: Locator;
   readonly passwordInput: Locator;
   readonly submitButton: Locator;
-  readonly successfulRegisterText: string = 'User created';
 
   constructor(private page: Page) {
     this.firstNameInput = this.page.getByTestId('firstname-input');
@@ -22,7 +23,7 @@ export class RegisterPage {
     this.submitButton = this.page.getByTestId('register-button');
   }
 
-  async fillRegistrationForm(user: TUser): Promise<void> {
+  async fillRegistrationForm(user: IUser): Promise<void> {
     await this.firstNameInput.fill(user.firstName!);
     await this.lastNameInput.fill(user.lastName!);
     await this.emailInput.fill(user.email);
