@@ -1,4 +1,4 @@
-export interface TUser {
+export interface IUser {
   email: string;
   password: string;
   firstName?: string;

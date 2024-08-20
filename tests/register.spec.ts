@@ -1,13 +1,9 @@
 import { test, expect, Page, BrowserContext, Browser } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { RegisterPage } from '../pages/register.page';
-import { LoginPage } from '../pages/login.page';
-import { WelcomePage } from '../pages/welcome.page';
-
-import { Notifications } from '../pages/components/notifications';
-
-import { TUser } from '../types/user';
+import { RegisterPage, LoginPage, WelcomePage } from '../pages';
+import { Notifications } from '../components';
+import { IUser } from '../interfaces';
 
 test.describe('Register new account', () => {
   test.describe.configure({ mode: 'serial' });
@@ -21,7 +17,7 @@ test.describe('Register new account', () => {
   let welcomePage: WelcomePage;
   let notifications: Notifications;
 
-  const user: TUser = {
+  const user: IUser = {
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
     email: faker.internet.email(),
@@ -53,6 +49,7 @@ test.describe('Register new account', () => {
     await registerPage.fillRegistrationForm(user);
     await registerPage.submit();
 
+    await expect(page).toHaveTitle(registerPage.title);
     await expect(notifications.alertPopup).toHaveText(
       registerPage.successfulRegisterText
     );
@@ -67,5 +64,15 @@ test.describe('Register new account', () => {
 
     await expect(page).toHaveURL(welcomePage.url);
     await expect(welcomePage.welcomeText).toHaveText(`Hi ${user.email}!`);
+  });
+
+  test('delete recently created account', async () => {
+    await page.goto(welcomePage.url);
+    await welcomePage.deleteAccount();
+
+    await loginPage.fillLoginForm(user);
+    await loginPage.submit();
+
+    await expect(loginPage.loginError).toHaveText(loginPage.loginErrorText);
   });
 });

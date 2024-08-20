@@ -1,4 +1,4 @@
-export interface TArticle {
+export interface IArticle {
   title: string;
   content: string;
 }

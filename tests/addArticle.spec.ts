@@ -1,15 +1,9 @@
 import { test, expect, Page, BrowserContext, Browser } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { LoginPage } from '../pages/login.page';
-import { WelcomePage } from '../pages/welcome.page';
-import { ArticlesPage } from '../pages/articles.page';
-
-import { HeaderNavigation } from '../pages/components/headerNavigation';
-import { Notifications } from '../pages/components/notifications';
-
-import { TUser } from '../types/user';
-import { TArticle } from '../types/article';
+import { ArticlesPage, LoginPage, WelcomePage } from '../pages';
+import { HeaderNavigation, Notifications } from '../components';
+import { IArticle, IUser } from '../interfaces';
 
 test.describe('Add new article', () => {
   test.describe.configure({ mode: 'serial' });
@@ -30,12 +24,12 @@ test.describe('Add new article', () => {
     );
   }
 
-  const user: TUser = {
+  const user: IUser = {
     email: process.env.USER_EMAIL,
     password: process.env.USER_PASSWORD
   };
 
-  const article: TArticle = {
+  const article: IArticle = {
     title: faker.lorem.sentence(),
     content: faker.lorem.paragraph(3)
   };
@@ -54,7 +48,7 @@ test.describe('Add new article', () => {
   test.beforeEach(async () => {
     loginPage = new LoginPage(page);
     welcomePage = new WelcomePage(page);
-    articlePage = new ArticlesPage(page);
+    articlePage = new ArticlesPage(page, article);
     headerNavigation = new HeaderNavigation(page);
     notifications = new Notifications(page);
   });
@@ -82,5 +76,14 @@ test.describe('Add new article', () => {
 
     await expect(articlePage.articleTitle).toHaveText(article.title);
     await expect(articlePage.articleContent).toHaveText(article.content);
+  });
+
+  test('delete article', async () => {
+    await page.goto(articlePage.url);
+    await articlePage.selectArticle(article);
+    await articlePage.deleteArticle();
+
+    await expect(articlePage.articleTitle).toBeHidden();
+    await expect(page).toHaveURL(articlePage.url);
   });
 });
