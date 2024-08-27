@@ -86,4 +86,12 @@ test.describe('Add new article', () => {
     await expect(articlePage.articleTitle).toBeHidden();
     await expect(page).toHaveURL(articlePage.url);
   });
+
+  test('logout', async () => {
+    await headerNavigation.profileDropdown.click();
+    await headerNavigation.logoutButton.click();
+
+    await expect(page).toHaveURL(loginPage.url);
+    await expect(page).toHaveTitle(loginPage.title);
+  });
 });
