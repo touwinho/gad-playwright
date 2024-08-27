@@ -19,7 +19,7 @@ test.describe('Register new account', () => {
 
   const user: IUser = {
     firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
+    lastName: faker.person.lastName().replace(/-/g, ''),
     email: faker.internet.email(),
     password: faker.internet.password(),
     dateOfBirth: faker.date.past().toISOString().split('T')[0]
