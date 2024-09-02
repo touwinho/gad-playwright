@@ -1,9 +1,9 @@
 import { test, expect, Page, BrowserContext, Browser } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { ArticlesPage, LoginPage, WelcomePage } from '../pages';
+import { ArticlePage, LoginPage, WelcomePage } from '../pages';
 import { HeaderNavigation, Notifications } from '../components';
-import { IArticle, IUser } from '../interfaces';
+import { IArticle, IComment, IUser } from '../interfaces';
 
 test.describe('Add new article', () => {
   test.describe.configure({ mode: 'serial' });
@@ -14,7 +14,7 @@ test.describe('Add new article', () => {
 
   let loginPage: LoginPage;
   let welcomePage: WelcomePage;
-  let articlePage: ArticlesPage;
+  let articlePage: ArticlePage;
   let headerNavigation: HeaderNavigation;
   let notifications: Notifications;
 
@@ -34,6 +34,10 @@ test.describe('Add new article', () => {
     content: faker.lorem.paragraph(3)
   };
 
+  const comment: IComment = {
+    content: faker.lorem.paragraph()
+  };
+
   test.beforeAll(async ({ browser: b }) => {
     browser = b;
     context = await browser.newContext();
@@ -48,7 +52,7 @@ test.describe('Add new article', () => {
   test.beforeEach(async () => {
     loginPage = new LoginPage(page);
     welcomePage = new WelcomePage(page);
-    articlePage = new ArticlesPage(page, article);
+    articlePage = new ArticlePage(page, article);
     headerNavigation = new HeaderNavigation(page);
     notifications = new Notifications(page);
   });
@@ -64,18 +68,30 @@ test.describe('Add new article', () => {
   });
 
   test('add article', async () => {
+    await page.goto(welcomePage.url);
+
     await headerNavigation.articles.click();
     await headerNavigation.addArticle.click();
 
     await articlePage.fillArticleForm(article);
     await articlePage.submit();
 
+    await expect(articlePage.articleTitle).toHaveText(article.title);
+    await expect(articlePage.articleContent).toHaveText(article.content);
     await expect(notifications.alertPopup).toHaveText(
       articlePage.successfulAddedArticleText
     );
+  });
 
-    await expect(articlePage.articleTitle).toHaveText(article.title);
-    await expect(articlePage.articleContent).toHaveText(article.content);
+  test('add comment', async () => {
+    await page.goto(articlePage.url);
+
+    await articlePage.selectArticle(article);
+    await articlePage.addCommentButton.click();
+    await articlePage.commentInput.fill(comment.content);
+    await articlePage.saveComment.click();
+
+    await expect(articlePage.comment).toHaveText(comment.content);
   });
 
   test('delete article', async () => {
