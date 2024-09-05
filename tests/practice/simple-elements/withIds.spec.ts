@@ -2,118 +2,110 @@ import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
 import { hexToRgb } from '../../../helpers/hexToRgb';
+import { SimpleElementsPage } from '../../../pages/practice';
 
 test.describe('Elements with ID and data-testid attributes', () => {
+  let simpleElementsPage: SimpleElementsPage;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/practice/simple-elements.html');
+    simpleElementsPage = new SimpleElementsPage(page);
+
+    await page.goto(simpleElementsPage.withIdsUrl);
   });
 
-  test('should have label', async ({ page }) => {
-    await expect(page.getByTestId('dti-label-element')).toHaveText(
-      'Some text for label'
-    );
-  });
-
-  test('should have button', async ({ page }) => {
-    await page.getByTestId('dti-button-element').click();
-
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'You clicked the button!'
+  test('should have label', async () => {
+    await expect(simpleElementsPage.label).toHaveText(
+      simpleElementsPage.labelText
     );
   });
 
-  test('should have checkbox', async ({ page }) => {
-    await page.getByTestId('dti-checkbox').check();
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Checkbox is checked!'
-    );
+  test('should have button', async () => {
+    await simpleElementsPage.button.click();
 
-    await page.getByRole('checkbox').uncheck();
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Checkbox is unchecked!'
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.buttonClickedConfirmation
     );
   });
 
-  test('should have input', async ({ page }) => {
-    await page.getByTestId('dti-input').fill('input test');
-    await page.getByTestId('dti-input').blur();
+  test('should have checkbox', async () => {
+    await simpleElementsPage.checkbox.check();
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.checkboxCheckedConfirmation
+    );
 
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Input value changed to: input test'
+    await simpleElementsPage.checkbox.uncheck();
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.checkboxUncheckedConfirmation
     );
   });
 
-  test('should have textarea', async ({ page }) => {
-    await page.getByTestId('dti-textarea').fill('textarea test');
-    await page.getByTestId('dti-textarea').blur();
+  test('should have input', async () => {
+    const randomText = faker.lorem.sentence();
+    await simpleElementsPage.input.fill(randomText);
+    await simpleElementsPage.input.blur();
 
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Textarea value changed to: textarea test'
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.inputFilledConfirmation(randomText)
     );
   });
 
-  test('should have dropdown', async ({ page }) => {
-    await page.getByTestId('dti-dropdown').selectOption('option2');
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Selected option: option2'
-    );
+  test('should have textarea', async () => {
+    const randomText = faker.lorem.sentence();
+    await simpleElementsPage.textarea.fill(randomText);
+    await simpleElementsPage.textarea.blur();
 
-    await page.getByTestId('dti-dropdown').selectOption('option3');
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Selected option: option3'
-    );
-
-    await page.getByTestId('dti-dropdown').selectOption('option1');
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Selected option: option1'
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.textareaFilledConfirmation(randomText)
     );
   });
 
-  test('should have radio-buttons', async ({ page }) => {
-    await page.getByRole('radio').first().check();
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Radio Button 1 clicked!'
-    );
-
-    await page.getByRole('radio').nth(1).check();
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Radio Button 2 clicked!'
-    );
-
-    await page.getByRole('radio').nth(2).check();
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Radio Button 3 clicked!'
-    );
+  test('should have dropdown', async () => {
+    for (let i = 3; i >= 1; i--) {
+      const selectedOption = `option${i}`;
+      await simpleElementsPage.dropdown.selectOption(selectedOption);
+      await expect(simpleElementsPage.resultsBox).toHaveText(
+        simpleElementsPage.dropdownSelectedConfirmation(selectedOption)
+      );
+    }
   });
 
-  test('should have range', async ({ page }) => {
+  test('should have radio-buttons', async () => {
+    for (let i = 1; i <= 3; i++) {
+      await simpleElementsPage.radioButtonSelector(i).check();
+      await expect(simpleElementsPage.resultsBox).toHaveText(
+        simpleElementsPage.radioButtonSelectedConfirmation(i)
+      );
+    }
+  });
+
+  test('should have range', async () => {
     const randomNumber = faker.number.int({ min: 0, max: 100 });
-    await page.getByRole('slider').fill(randomNumber.toString());
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      `Range value changed to: ${randomNumber}`
+    await simpleElementsPage.rangeInput.fill(randomNumber.toString());
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.rangeInputChangedConfirmation(randomNumber)
     );
   });
 
-  test('should have hovering label', async ({ page }) => {
-    await page.getByTestId('dti-tooltip-element').hover();
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      'Mouse over event occurred!'
+  test('should have hovering label', async () => {
+    await simpleElementsPage.hoveredElement.hover();
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.hoveredElementConfirmation
     );
   });
 
-  test('should have hovering datepicker', async ({ page }) => {
+  test('should have datepicker', async () => {
     const date = faker.date.anytime().toISOString().split('T')[0];
-    await page.getByTestId('dti-date').fill(date);
-    await expect(page.getByTestId('dti-results')).toHaveText(
-      `Selected date: ${date}`
+    await simpleElementsPage.datepicker.fill(date);
+    await expect(simpleElementsPage.resultsBox).toHaveText(
+      simpleElementsPage.selectedDateConirmation(date)
     );
   });
 
-  test('should have hovering colorpicker', async ({ page }) => {
+  test('should have colorpicker', async () => {
     const hexColor = faker.color.rgb();
-    await page.getByTestId('dti-color').fill(hexColor);
-    await expect(page.getByTestId('dti-results')).toContainText(
-      `New selected color: ${hexColor} as hex and in RGB: ${hexToRgb(hexColor)}`
+    await simpleElementsPage.colorpicker.fill(hexColor);
+    await expect(simpleElementsPage.resultsBox).toContainText(
+      simpleElementsPage.selectedColorConfitmation(hexColor, hexToRgb(hexColor))
     );
   });
 });
