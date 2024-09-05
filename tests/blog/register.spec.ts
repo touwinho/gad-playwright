@@ -1,9 +1,9 @@
 import { test, expect, Page, BrowserContext, Browser } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { RegisterPage, LoginPage, WelcomePage } from '../pages';
-import { Notifications } from '../components';
-import { IUser } from '../interfaces';
+import { RegisterPage, LoginPage, WelcomePage } from '../../pages/blog';
+import { Notifications } from '../../components';
+import { IUser } from '../../interfaces';
 
 test.describe('Register new account', () => {
   test.describe.configure({ mode: 'serial' });
@@ -22,7 +22,7 @@ test.describe('Register new account', () => {
     lastName: faker.person.lastName().replace(/-/g, ''),
     email: faker.internet.email(),
     password: faker.internet.password(),
-    dateOfBirth: faker.date.past().toISOString().split('T')[0]
+    dateOfBirth: faker.date.birthdate().toISOString().split('T')[0]
   };
 
   test.beforeAll(async ({ browser: b }) => {

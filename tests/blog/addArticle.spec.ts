@@ -1,9 +1,9 @@
 import { test, expect, Page, BrowserContext, Browser } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { ArticlePage, LoginPage, WelcomePage } from '../pages';
-import { HeaderNavigation, Notifications } from '../components';
-import { IArticle, IComment, IUser } from '../interfaces';
+import { ArticlePage, LoginPage, WelcomePage } from '../../pages/blog';
+import { HeaderNavigation, Notifications } from '../../components';
+import { IArticle, IComment, IUser } from '../../interfaces';
 
 test.describe('Add new article', () => {
   test.describe.configure({ mode: 'serial' });
