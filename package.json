@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint '**/*.{ts,js}'",
-    "format": "prettier --write '**/*.{ts,js,json,md}'"
+    "format": "prettier --write '**/*.{ts,js,json,md}'",
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed"
   },
   "keywords": [],
   "author": "",

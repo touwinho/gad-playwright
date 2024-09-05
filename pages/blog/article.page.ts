@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { IArticle } from '../interfaces';
+import { IArticle } from '../../interfaces';
 
 export class ArticlePage {
   readonly url = '/articles.html';

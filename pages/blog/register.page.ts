@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { IUser } from '../interfaces';
+import { IUser } from '../../interfaces';
 
 export class RegisterPage {
   readonly url = '/register.html';
