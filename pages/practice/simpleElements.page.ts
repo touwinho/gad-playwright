@@ -13,9 +13,7 @@ export class SimpleElementsPage {
   readonly input: Locator;
   readonly textarea: Locator;
   readonly dropdown: Locator;
-  readonly radioButton1: Locator;
-  readonly radioButton2: Locator;
-  readonly radioButton3: Locator;
+  readonly radioButtons: Locator[];
   readonly rangeInput: Locator;
   readonly hoveredElement: Locator;
   readonly datepicker: Locator;
@@ -29,9 +27,9 @@ export class SimpleElementsPage {
     this.input = this.page.getByTestId('dti-input');
     this.textarea = this.page.getByTestId('dti-textarea');
     this.dropdown = this.page.getByTestId('dti-dropdown');
-    this.radioButton1 = this.page.getByTestId('dti-radio1');
-    this.radioButton2 = this.page.getByTestId('dti-radio2');
-    this.radioButton3 = this.page.getByTestId('dti-radio3');
+    this.radioButtons = [1, 2, 3].map((i) =>
+      this.page.getByTestId(`dti-radio${i}`)
+    );
     this.rangeInput = this.page.getByTestId('dti-range');
     this.hoveredElement = this.page.getByTestId('dti-tooltip-element');
     this.datepicker = this.page.getByTestId('dti-date');
@@ -51,10 +49,6 @@ export class SimpleElementsPage {
     return `Selected option: ${value}`;
   }
 
-  radioButtonSelector(value: number): Locator {
-    return this.page.getByTestId(`dti-radio${value}`);
-  }
-
   radioButtonSelectedConfirmation(value: number): string {
     return `Radio Button ${value} clicked!`;
   }
@@ -63,11 +57,11 @@ export class SimpleElementsPage {
     return `Range value changed to: ${value}`;
   }
 
-  selectedDateConirmation(value: string): string {
+  selectedDateConfirmation(value: string): string {
     return `Selected date: ${value}`;
   }
 
-  selectedColorConfitmation(value: string, rgbValue: string): string {
+  selectedColorConfirmation(value: string, rgbValue: string): string {
     return `New selected color: ${value} as hex and in RGB: ${rgbValue}`;
   }
 }

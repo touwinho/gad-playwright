@@ -60,8 +60,9 @@ test.describe('Elements with ID and data-testid attributes', () => {
   });
 
   test('should have dropdown', async () => {
-    for (let i = 3; i >= 1; i--) {
-      const selectedOption = `option${i}`;
+    // Loop is reversed because picking first option is picked by default, it won't cause confirmation in results box
+    for (let i = 2; i >= 0; i--) {
+      const selectedOption = `option${i + 1}`;
       await simpleElementsPage.dropdown.selectOption(selectedOption);
       await expect(simpleElementsPage.resultsBox).toHaveText(
         simpleElementsPage.dropdownSelectedConfirmation(selectedOption)
@@ -70,10 +71,10 @@ test.describe('Elements with ID and data-testid attributes', () => {
   });
 
   test('should have radio-buttons', async () => {
-    for (let i = 1; i <= 3; i++) {
-      await simpleElementsPage.radioButtonSelector(i).check();
+    for (let i = 0; i <= 2; i++) {
+      await simpleElementsPage.radioButtons[i].check();
       await expect(simpleElementsPage.resultsBox).toHaveText(
-        simpleElementsPage.radioButtonSelectedConfirmation(i)
+        simpleElementsPage.radioButtonSelectedConfirmation(i + 1)
       );
     }
   });
@@ -97,7 +98,7 @@ test.describe('Elements with ID and data-testid attributes', () => {
     const date = faker.date.anytime().toISOString().split('T')[0];
     await simpleElementsPage.datepicker.fill(date);
     await expect(simpleElementsPage.resultsBox).toHaveText(
-      simpleElementsPage.selectedDateConirmation(date)
+      simpleElementsPage.selectedDateConfirmation(date)
     );
   });
 
@@ -105,7 +106,7 @@ test.describe('Elements with ID and data-testid attributes', () => {
     const hexColor = faker.color.rgb();
     await simpleElementsPage.colorpicker.fill(hexColor);
     await expect(simpleElementsPage.resultsBox).toContainText(
-      simpleElementsPage.selectedColorConfitmation(hexColor, hexToRgb(hexColor))
+      simpleElementsPage.selectedColorConfirmation(hexColor, hexToRgb(hexColor))
     );
   });
 });
