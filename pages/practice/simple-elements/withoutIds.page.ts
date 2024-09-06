@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 
-export class SimpleElementsPage {
-  readonly withIdsUrl = '/practice/simple-elements.html';
+export class WithoutIds {
+  readonly url = '/practice/simple-elements-no-ids.html';
   readonly labelText = 'Some text for label';
   readonly buttonClickedConfirmation = 'You clicked the button!';
   readonly checkboxCheckedConfirmation = 'Checkbox is checked!';
@@ -21,20 +21,22 @@ export class SimpleElementsPage {
   readonly resultsBox: Locator;
 
   constructor(private page: Page) {
-    this.label = this.page.getByTestId('dti-label-element');
-    this.button = this.page.getByTestId('dti-button-element');
-    this.checkbox = this.page.getByTestId('dti-checkbox');
-    this.input = this.page.getByTestId('dti-input');
-    this.textarea = this.page.getByTestId('dti-textarea');
-    this.dropdown = this.page.getByTestId('dti-dropdown');
+    this.label = this.page.locator('label.my-label');
+    this.button = this.page.locator('button.my-button');
+    this.checkbox = this.page.getByRole('checkbox');
+    this.input = this.page.locator('input.my-input');
+    this.textarea = this.page.locator('textarea');
+    this.dropdown = this.page.locator('[name="name-dropdown"]');
     this.radioButtons = [1, 2, 3].map((i) =>
-      this.page.getByTestId(`dti-radio${i}`)
+      this.page.locator(`input[value="radio${i}"]`)
     );
-    this.rangeInput = this.page.getByTestId('dti-range');
-    this.hoveredElement = this.page.getByTestId('dti-tooltip-element');
-    this.datepicker = this.page.getByTestId('dti-date');
-    this.colorpicker = this.page.getByTestId('dti-color');
-    this.resultsBox = this.page.getByTestId('dti-results');
+    this.rangeInput = this.page.locator('input[type="range"]');
+    this.hoveredElement = this.page.locator(
+      'label:has-text("Hoover mouse here!")'
+    );
+    this.datepicker = this.page.locator('input[type="date"]');
+    this.colorpicker = this.page.locator('input[type="color"]');
+    this.resultsBox = this.page.locator('div#results-container');
   }
 
   inputFilledConfirmation(value: string): string {
