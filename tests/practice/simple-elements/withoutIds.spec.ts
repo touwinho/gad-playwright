@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
 import { hexToRgb } from '../../../helpers/hexToRgb';
-import { WithIds } from '../../../pages/practice/simple-elements';
+import { WithoutIds } from '../../../pages/practice/simple-elements';
 
-test.describe('Elements with ID and data-testid attributes', () => {
-  let simpleElementsPage: WithIds;
+test.describe('Elements without any ID or data-testid attributes', () => {
+  let simpleElementsPage: WithoutIds;
 
   test.beforeEach(async ({ page }) => {
-    simpleElementsPage = new WithIds(page);
+    simpleElementsPage = new WithoutIds(page);
 
     await page.goto(simpleElementsPage.url);
   });
