@@ -1,27 +1,20 @@
-import { Page, Locator } from '@playwright/test';
-import { IUser } from '../../interfaces';
+import { Page } from '@playwright/test';
+import { IUser } from '@interfaces/index';
 
 export class RegisterPage {
-  readonly url = '/register.html';
-  readonly title = '🦎 GAD | Register';
-  readonly successfulRegisterText = 'User created';
-  readonly firstNameInput: Locator;
-  readonly lastNameInput: Locator;
-  readonly emailInput: Locator;
-  readonly birthdateInput: Locator;
-  readonly closeCalendarButton: Locator;
-  readonly passwordInput: Locator;
-  readonly submitButton: Locator;
+  constructor(private page: Page) {}
 
-  constructor(private page: Page) {
-    this.firstNameInput = this.page.getByTestId('firstname-input');
-    this.lastNameInput = this.page.getByTestId('lastname-input');
-    this.emailInput = this.page.getByTestId('email-input');
-    this.birthdateInput = this.page.getByTestId('birthdate-input');
-    this.closeCalendarButton = this.page.getByRole('button', { name: 'Done' });
-    this.passwordInput = this.page.getByTestId('password-input');
-    this.submitButton = this.page.getByTestId('register-button');
-  }
+  url = '/register.html';
+  title = '🦎 GAD | Register';
+  firstNameInput = this.page.getByTestId('firstname-input');
+  lastNameInput = this.page.getByTestId('lastname-input');
+  emailInput = this.page.getByTestId('email-input');
+  birthdateInput = this.page.getByTestId('birthdate-input');
+  closeCalendarButton = this.page.getByRole('button', {
+    name: 'Done'
+  });
+  passwordInput = this.page.getByTestId('password-input');
+  submitButton = this.page.getByTestId('register-button');
 
   async fillRegistrationForm(user: IUser): Promise<void> {
     await this.firstNameInput.fill(user.firstName!);

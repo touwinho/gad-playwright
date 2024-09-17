@@ -1,9 +1,9 @@
 import { test, expect, Page, BrowserContext, Browser } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { RegisterPage, LoginPage, WelcomePage } from '../../../pages/blog';
-import { Notifications } from '../../../components';
-import { IUser } from '../../../interfaces';
+import { RegisterPage, LoginPage, WelcomePage } from '@pages/blog/index';
+import { Notifications } from '@components/index';
+import { IUser } from '@interfaces/index';
 
 test.describe(
   'Register new account (GUI)',
@@ -47,36 +47,37 @@ test.describe(
     });
 
     test('should create a new user account successfully', async () => {
+      const successfulRegisterText = 'User created';
+
       await page.goto(registerPage.url);
 
       await registerPage.fillRegistrationForm(user);
       await registerPage.submit();
 
       await expect(page).toHaveTitle(registerPage.title);
-      await expect(notifications.alertPopup).toHaveText(
-        registerPage.successfulRegisterText
-      );
+      await expect(notifications.alertPopup).toHaveText(successfulRegisterText);
       await expect(page).toHaveURL(loginPage.url);
       await expect(page).toHaveTitle(loginPage.title);
     });
 
     test('should login on recently created account', async () => {
       await page.goto(loginPage.url);
-      await loginPage.fillLoginForm(user);
+      await loginPage.fillForm(user);
       await loginPage.submit();
 
       await expect(page).toHaveURL(welcomePage.url);
-      await expect(welcomePage.welcomeText).toHaveText(`Hi ${user.email}!`);
+      await expect(welcomePage.welcomeHeader).toHaveText(`Hi ${user.email}!`);
     });
 
     test('should delete recently created account', async () => {
+      const loginErrorText = 'Invalid username or password';
       await page.goto(welcomePage.url);
       await welcomePage.deleteAccount();
 
-      await loginPage.fillLoginForm(user);
+      await loginPage.fillForm(user);
       await loginPage.submit();
 
-      await expect(loginPage.loginError).toHaveText(loginPage.loginErrorText);
+      await expect(loginPage.error).toHaveText(loginErrorText);
     });
   }
 );
