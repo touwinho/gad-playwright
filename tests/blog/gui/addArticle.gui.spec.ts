@@ -1,9 +1,9 @@
 import { test, expect, Page, BrowserContext, Browser } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { ArticlePage, LoginPage, WelcomePage } from '../../../pages/blog';
-import { HeaderNavigation, Notifications } from '../../../components';
-import { IArticle, IComment, IUser } from '../../../interfaces';
+import { ArticlePage, LoginPage, WelcomePage } from '@pages/blog/index';
+import { HeaderNavigation, Notifications } from '@components/index';
+import { IArticle, IUser } from '@interfaces/index';
 
 test.describe(
   'Add new article (GUI)',
@@ -37,9 +37,7 @@ test.describe(
       content: faker.lorem.paragraph(3)
     };
 
-    const comment: IComment = {
-      content: faker.lorem.paragraph()
-    };
+    const comment: string = faker.lorem.paragraph();
 
     test.beforeAll(async ({ browser: b }) => {
       browser = b;
@@ -63,7 +61,7 @@ test.describe(
     test('login', async () => {
       await page.goto(loginPage.url);
 
-      await loginPage.fillLoginForm(user);
+      await loginPage.fillForm(user);
       await loginPage.submitButton.click();
 
       await expect(page).toHaveURL(welcomePage.url);
@@ -71,36 +69,38 @@ test.describe(
     });
 
     test('should add article', async () => {
+      const successfulAddedArticleText = 'Article was created';
+
       await page.goto(welcomePage.url);
 
       await headerNavigation.articles.click();
       await headerNavigation.addArticle.click();
 
-      await articlePage.fillArticleForm(article);
+      await articlePage.fillForm(article);
       await articlePage.submit();
 
       await expect(articlePage.articleTitle).toHaveText(article.title);
       await expect(articlePage.articleContent).toHaveText(article.content);
       await expect(notifications.alertPopup).toHaveText(
-        articlePage.successfulAddedArticleText
+        successfulAddedArticleText
       );
     });
 
     test('should add comment', async () => {
       await page.goto(articlePage.url);
 
-      await articlePage.selectArticle(article);
+      await articlePage.select(article);
       await articlePage.addCommentButton.click();
-      await articlePage.commentInput.fill(comment.content);
-      await articlePage.saveComment.click();
+      await articlePage.commentInput.fill(comment);
+      await articlePage.saveCommentButton.click();
 
-      await expect(articlePage.comment).toHaveText(comment.content);
+      await expect(articlePage.comment).toHaveText(comment);
     });
 
     test('should delete article', async () => {
       await page.goto(articlePage.url);
-      await articlePage.selectArticle(article);
-      await articlePage.deleteArticle();
+      await articlePage.select(article);
+      await articlePage.delete();
 
       await expect(articlePage.articleTitle).toBeHidden();
       await expect(page).toHaveURL(articlePage.url);
