@@ -16,7 +16,8 @@ test.describe(
   () => {
     test.describe.configure({ mode: 'serial' });
 
-    // let registeredUserId: number;
+    let registeredUserId: number;
+    let headers: { Authorization: string };
 
     test('should create a new user account successfully', async ({
       request
@@ -24,34 +25,39 @@ test.describe(
       const responseUser = await request.post('/api/users', {
         data: user
       });
-      //   const responseBody = await responseUser.json();
-      //   registeredUserId = responseBody.id;
+      const responseBody = await responseUser.json();
+      registeredUserId = responseBody.id;
 
       expect(responseUser.ok()).toBeTruthy();
     });
 
     test('should login on recently created account', async ({ request }) => {
-      const responseLogin = await request.post('/process_login', {
+      const responseLogin = await request.post('/api/login', {
         data: {
           email: user.email,
           password: user.password
         }
       });
 
+      const responseBody = await responseLogin.json();
+      headers = { Authorization: `Bearer ${responseBody.access_token}` };
+
       expect(responseLogin.ok()).toBeTruthy();
+      expect(responseBody.access_token).not.toBeUndefined();
     });
 
-    // test('should delete recently created account', async ({ request }) => {
-    //   const responseDelete = await request.delete(
-    //     `/api/users/${registeredUserId}`,
-    //     {
-    //       data: {
-    //         email: user.email
-    //       }
-    //     }
-    //   );
+    test('should delete recently created account', async ({ request }) => {
+      const responseDelete = await request.delete(
+        `/api/users/${registeredUserId}`,
+        {
+          data: {
+            email: user.email
+          },
+          headers
+        }
+      );
 
-    //   expect(responseDelete.ok()).toBeTruthy();
-    // });
+      expect(responseDelete.ok()).toBeTruthy();
+    });
   }
 );
