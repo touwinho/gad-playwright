@@ -4,8 +4,9 @@ import { faker } from '@faker-js/faker';
 import { ArticlePage, LoginPage, WelcomePage } from '@pages/index';
 import { HeaderNavigation, Notifications } from '@components/index';
 import { IArticle, IUser } from '@interfaces/index';
+import { IComment } from '@interfaces/comment';
 
-test.describe('Add new article (GUI)', { tag: '@gui' }, () => {
+test.describe('Article operations (GUI)', { tag: '@gui' }, () => {
   test.describe.configure({ mode: 'serial' });
 
   let page: Page;
@@ -31,10 +32,10 @@ test.describe('Add new article (GUI)', { tag: '@gui' }, () => {
 
   const article: IArticle = {
     title: faker.lorem.sentence(),
-    content: faker.lorem.paragraph(3)
+    body: faker.lorem.paragraph(3)
   };
 
-  const comment: string = faker.lorem.paragraph();
+  const comment: IComment = { body: faker.lorem.paragraph() };
 
   test.beforeAll(async ({ browser: b }) => {
     browser = b;
@@ -55,7 +56,7 @@ test.describe('Add new article (GUI)', { tag: '@gui' }, () => {
     await context.close();
   });
 
-  test('login', async () => {
+  test('should login on existing account', async () => {
     await page.goto(loginPage.url);
 
     await loginPage.fillForm(user);
@@ -65,7 +66,7 @@ test.describe('Add new article (GUI)', { tag: '@gui' }, () => {
     await expect(page).toHaveTitle(welcomePage.title);
   });
 
-  test('should add article', async () => {
+  test('should add new article', async () => {
     const successfulAddedArticleText = 'Article was created';
 
     await page.goto(welcomePage.url);
@@ -77,7 +78,7 @@ test.describe('Add new article (GUI)', { tag: '@gui' }, () => {
     await articlePage.submit();
 
     await expect(articlePage.articleTitle).toHaveText(article.title);
-    await expect(articlePage.articleContent).toHaveText(article.content);
+    await expect(articlePage.articleContent).toHaveText(article.body);
     await expect(notifications.alertPopup).toHaveText(
       successfulAddedArticleText
     );
@@ -88,10 +89,10 @@ test.describe('Add new article (GUI)', { tag: '@gui' }, () => {
 
     await articlePage.select(article);
     await articlePage.addCommentButton.click();
-    await articlePage.commentInput.fill(comment);
+    await articlePage.commentInput.fill(comment.body);
     await articlePage.saveCommentButton.click();
 
-    await expect(articlePage.comment).toHaveText(comment);
+    await expect(articlePage.comment).toHaveText(comment.body);
   });
 
   test('should delete article', async () => {

@@ -60,6 +60,24 @@ npm run test
 npm run test:headed
 ```
 
+### Run API Tests
+
+```
+npm run test:api
+```
+
+### Run GUI Tests (Headless Mode)
+
+```
+npm run test:gui
+```
+
+### Run GUI Tests (With Browser GUI)
+
+```
+npm run test:gui-headed
+```
+
 ## Project Structure
 
 This project is organized into two primary folders for test cases:

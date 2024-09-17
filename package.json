@@ -6,7 +6,10 @@
     "lint": "eslint '**/*.{ts,js}'",
     "format": "prettier --write '**/*.{ts,js,json,md}'",
     "test": "npx playwright test",
-    "test:headed": "npx playwright test --headed"
+    "test:headed": "npx playwright test --headed",
+    "test:api": "npx playwright test api",
+    "test:gui": "npx playwright test gui",
+    "test:gui-headed": "npx playwright test gui --headed"
   },
   "keywords": [],
   "author": "",

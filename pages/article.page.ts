@@ -24,7 +24,7 @@ export class ArticlePage {
 
   async fillForm(article: IArticle): Promise<void> {
     await this.titleInput.fill(article.title);
-    await this.contentInput.fill(article.content);
+    await this.contentInput.fill(article.body);
   }
 
   async submit(): Promise<void> {

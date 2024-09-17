@@ -17,10 +17,10 @@ export class RegisterPage {
   submitButton = this.page.getByTestId('register-button');
 
   async fillRegistrationForm(user: IUser): Promise<void> {
-    await this.firstNameInput.fill(user.firstName!);
-    await this.lastNameInput.fill(user.lastName!);
+    await this.firstNameInput.fill(user.firstname!);
+    await this.lastNameInput.fill(user.lastname!);
     await this.emailInput.fill(user.email);
-    await this.birthdateInput.fill(user.dateOfBirth!);
+    await this.birthdateInput.fill(user.birthDate!);
     await this.closeCalendarButton.click();
     await this.passwordInput.fill(user.password);
   }
