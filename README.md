@@ -77,12 +77,3 @@ npm run test:gui
 ```
 npm run test:gui-headed
 ```
-
-## Project Structure
-
-This project is organized into two primary folders for test cases:
-
-- blog: Contains tests related to the blog functionality of the GAD application.
-- practice: Contains tests for various practice features of the application.
-
-Each folder focuses on verifying different functionalities within the GAD application, ensuring comprehensive test coverage across critical user interactions.
