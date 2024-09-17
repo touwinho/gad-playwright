@@ -1,4 +1,6 @@
 export interface IArticle {
   title: string;
-  content: string;
+  body: string;
+  date?: string;
+  image?: string;
 }

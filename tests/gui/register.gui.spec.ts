@@ -18,11 +18,11 @@ test.describe('Register new account (GUI)', { tag: '@gui' }, () => {
   let notifications: Notifications;
 
   const user: IUser = {
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName().replace(/-/g, ''),
+    firstname: faker.person.firstName(),
+    lastname: faker.person.lastName().replace(/-/g, ''),
     email: faker.internet.email(),
     password: faker.internet.password(),
-    dateOfBirth: faker.date.birthdate().toISOString().split('T')[0]
+    birthDate: faker.date.birthdate().toISOString().split('T')[0]
   };
 
   test.beforeAll(async ({ browser: b }) => {
