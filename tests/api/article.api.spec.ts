@@ -55,6 +55,18 @@ test.describe('Article operations (API)', { tag: '@api' }, () => {
     expect(responseArticle.ok()).toBeTruthy();
   });
 
+  test('should find new article on articles list', async ({ request }) => {
+    const responseArticles = await request.get(`/api/articles/${articleId}`);
+    const responseBody = await responseArticles.json();
+
+    expect(responseBody).toMatchObject({
+      id: articleId,
+      title: article.title,
+      body: article.body,
+      image: article.image
+    });
+  });
+
   test('should add comment to article', async ({ request }) => {
     const responseComment = await request.post(`/api/comments`, {
       data: {
@@ -71,6 +83,16 @@ test.describe('Article operations (API)', { tag: '@api' }, () => {
     expect(responseComment.ok()).toBeTruthy();
   });
 
+  test('should find new comment on comments list', async ({ request }) => {
+    const responseComments = await request.get(`/api/comments/${commentId}`);
+    const responseBody = await responseComments.json();
+
+    expect(responseBody).toMatchObject({
+      id: commentId,
+      body: comment.body
+    });
+  });
+
   test('should delete comment', async ({ request }) => {
     const responseDelete = await request.delete(`/api/comments/${commentId}`, {
       headers
@@ -79,11 +101,23 @@ test.describe('Article operations (API)', { tag: '@api' }, () => {
     expect(responseDelete.ok()).toBeTruthy();
   });
 
+  test('should not find new comment on comments list', async ({ request }) => {
+    const responseComments = await request.get(`/api/comments/${commentId}`);
+
+    expect(responseComments.status()).toEqual(404);
+  });
+
   test('should delete article', async ({ request }) => {
     const responseDelete = await request.delete(`/api/articles/${articleId}`, {
       headers
     });
 
     expect(responseDelete.ok()).toBeTruthy();
+  });
+
+  test('should not find new article on articles list', async ({ request }) => {
+    const responseArticles = await request.get(`/api/articles/${articleId}`);
+
+    expect(responseArticles.status()).toEqual(404);
   });
 });

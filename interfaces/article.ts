@@ -3,4 +3,5 @@ export interface IArticle {
   body: string;
   date?: string;
   image?: string;
+  id?: number;
 }
