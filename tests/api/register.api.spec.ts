@@ -28,6 +28,17 @@ test.describe('Register new account (API)', { tag: '@api' }, () => {
     expect(responseUser.ok()).toBeTruthy();
   });
 
+  test('should find new user on users list', async ({ request }) => {
+    const responseUsers = await request.get(`/api/users/${registeredUserId}`);
+    const responseBody = await responseUsers.json();
+
+    expect(responseBody).toMatchObject({
+      id: registeredUserId,
+      firstname: user.firstname,
+      avatar: user.avatar
+    });
+  });
+
   test('should login on recently created account', async ({ request }) => {
     const responseLogin = await request.post('/api/login', {
       data: {
@@ -55,5 +66,11 @@ test.describe('Register new account (API)', { tag: '@api' }, () => {
     );
 
     expect(responseDelete.ok()).toBeTruthy();
+  });
+
+  test('should not find new user on users list', async ({ request }) => {
+    const responseUsers = await request.get(`/api/users/${registeredUserId}`);
+
+    expect(responseUsers.status()).toEqual(404);
   });
 });
