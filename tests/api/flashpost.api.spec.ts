@@ -11,7 +11,7 @@ test.describe('Flashpost operations (API)', { tag: '@api' }, () => {
     password: process.env.USER_PASSWORD
   };
 
-  const flashpost = faker.lorem.paragraph();
+  const flashpost = faker.lorem.sentence();
 
   let headers: { Authorization: string };
   let publicFlashpostId: number;
