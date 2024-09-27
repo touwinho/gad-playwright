@@ -8,6 +8,7 @@ This document contains a record of important decisions made during the developme
 - [Decision #2: Selection of Development Dependencies](#decision-2-selection-of-development-dependencies)
 - [Decision #3: Adoption of the Page Object Model (POM)](#decision-3-adoption-of-the-page-object-model-pom)
 - [Decision #4: Adding API Testing in Playwright](#decision-4-adding-api-testing-in-playwright)
+- [Decision #5: Refactoring GUI Test Logging to a Centralized Location](#decision-5-refactoring-gui-test-logging-to-a-centralized-location)
 - [How to Use This Document](#how-to-use-this-document)
 
 ## Decisions
@@ -142,7 +143,7 @@ The team decided to extend the Playwright testing framework to include **API tes
 
 - **Positive**:
 
-  - **Unified Framework**: By using Playwright for both UI and API tests, the team can maintain a single test suite, simplifying setup, maintenance, and execution. There’s no need to switch between tools for different types of testing.
+  - **Unified Framework**: By using Playwright for both UI and API tests, the team can maintain a single test suite, simplifying setup, maintenance, and execution. There is no need to switch between tools for different types of testing.
   - **Efficient Workflows**: Running both UI and API tests in the same framework can lead to more efficient CI/CD pipelines and test management, reducing the need for context switching.
   - **Strong Playwright Support**: Playwright’s API testing capabilities include features like network request interception, response validation, and mocking, which simplify the process of creating end-to-end tests that cover both frontend and backend.
   - **End-to-End Testing**: Combining UI and API tests allows for comprehensive end-to-end testing, ensuring that both the frontend and backend are working together as expected.
@@ -150,6 +151,38 @@ The team decided to extend the Playwright testing framework to include **API tes
 - **Negative**:
   - **Limited Advanced Features**: Although Playwright offers strong support for API testing, it may lack some of the more advanced features provided by dedicated API testing tools such as Postman (e.g., graphical interfaces, automated schema validation).
   - **Learning Curve**: For team members who are primarily focused on UI testing, there might be a slight learning curve to fully understand and implement API testing using Playwright.
+
+---
+
+### Decision #5: Refactoring GUI Test Logging to a Centralized Location
+
+**Date**: 2024-09-27
+
+**Responsible Person**: Łukasz Tołwiński
+
+**Context**:
+During the development of the test suite, the team identified frequent duplication of the login logic across multiple GUI tests. Each test required repetitive login steps, which not only increased code redundancy but also made maintenance more challenging, especially when there were changes in the authentication process. To improve maintainability and reduce duplication, it was suggested to refactor the login logic and move it to a centralized location.
+
+**Considered Options**:
+
+1. **Centralize the Login Logic**: Move the login procedure to a dedicated helper function or module that can be reused across tests. This would eliminate the need to duplicate the login logic in every individual test and allow for easier updates when the authentication flow changes.
+2. **Keep the Login Logic in Each Test**: Retain the existing approach where each test has its own login logic. This option provides flexibility for customizing login steps on a per-test basis but results in duplicated code and increased maintenance efforts when changes are needed.
+
+**Decision Made**:
+The team decided to refactor the login logic into a **centralized** location. This would be achieved by creating a helper function or module that handles the login procedure. This function can then be called in any test requiring authentication, reducing code duplication and improving test maintainability.
+
+**Consequences**:
+
+- **Positive**:
+
+  - **Reduced Code Duplication**: Centralizing the login logic means the login steps are written once and reused across all tests that need authentication, significantly reducing repetitive code.
+  - **Easier Maintenance**: Any future changes to the authentication process only need to be updated in a single place, streamlining updates and reducing the chance of errors due to inconsistent logic across tests.
+  - **Improved Readability**: Tests become more concise and focused on their specific objectives since the login process is abstracted away, leading to cleaner and easier-to-understand test cases.
+  - **Consistent Behavior**: Centralized login ensures that all tests follow the same authentication process, reducing the risk of discrepancies between tests.
+
+- **Negative**:
+  - **Loss of Test-Specific Customization**: By centralizing the login, there might be a reduced ability to easily customize login steps for specific tests that require variations in the login procedure. However, this can be mitigated by adding parameters or options to the centralized function.
+  - **Initial Refactoring Effort**: Refactoring existing tests to use the centralized login logic requires time and effort upfront, though this is a one-time cost that will lead to long-term benefits.
 
 ---
 
