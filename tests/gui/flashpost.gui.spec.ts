@@ -27,13 +27,26 @@ test.describe('Flashposts operations (GUI)', () => {
     browser = b;
     context = await browser.newContext();
     page = await context.newPage();
-  });
 
-  test.beforeEach(async () => {
     loginPage = new LoginPage(page);
     welcomePage = new WelcomePage(page);
     flashpostPage = new FlashpostPage(page);
     headerNavigation = new HeaderNavigation(page);
+
+    flashposts = [
+      {
+        body: faker.lorem.sentence(),
+        isPublic: true,
+        color: faker.color.rgb(),
+        icon: flashpostPage.publicFlashpostIconClass
+      },
+      {
+        body: faker.lorem.sentence(),
+        isPublic: false,
+        color: faker.color.rgb(),
+        icon: flashpostPage.privateFlashpostIconClass
+      }
+    ];
   });
 
   test.afterAll(async () => {
@@ -47,28 +60,6 @@ test.describe('Flashposts operations (GUI)', () => {
   };
 
   let flashposts: IFlashpost[];
-
-  test.beforeEach(async () => {
-    loginPage = new LoginPage(page);
-    welcomePage = new WelcomePage(page);
-    flashpostPage = new FlashpostPage(page);
-    headerNavigation = new HeaderNavigation(page);
-
-    flashposts = [
-      {
-        body: faker.lorem.sentence(),
-        isPublic: true,
-        color: faker.color.rgb(),
-        icon: flashpostPage.newestFlashPostPublicIcon
-      },
-      {
-        body: faker.lorem.sentence(),
-        isPublic: false,
-        color: faker.color.rgb(),
-        icon: flashpostPage.newestFlashPostPrivateIcon
-      }
-    ];
-  });
 
   test('should login on existing account', async () => {
     await page.goto(loginPage.url);
@@ -90,10 +81,15 @@ test.describe('Flashposts operations (GUI)', () => {
       await flashpostPage.fillFlashpostForm(flashpost);
       await flashpostPage.submitFlashpostButton.click();
 
-      await expect(flashpostPage.confirmationToast).toHaveText(
+      await expect(flashpostPage.confirmationToast.first()).toHaveText(
         flashpostPage.createConfirmationToastText
       );
-      await expect(flashpostPage.newestFlashpost).toHaveText(flashpost.body);
+      await expect(
+        flashpostPage.locatePostByText(flashpost.body)
+      ).toBeVisible();
+      await expect(
+        flashpostPage.locateVisibilityIconByText(flashpost.body)
+      ).toHaveClass(flashpost.icon);
     }
     await expect(page).toHaveURL(flashpostPage.url);
   });
@@ -102,14 +98,12 @@ test.describe('Flashposts operations (GUI)', () => {
     await page.goto(flashpostPage.url);
 
     for (const flashpost of flashposts) {
-      await flashpostPage.deleteNewestFlashpostButton.click();
+      await flashpostPage.locateTrashIconByText(flashpost.body).click();
 
       await expect(flashpostPage.confirmationToast).toHaveText(
         flashpostPage.deleteConfirmationToastText
       );
-      await expect(flashpostPage.newestFlashpost).not.toHaveText(
-        flashpost.body
-      );
+      await expect(flashpostPage.locatePostByText(flashpost.body)).toBeHidden();
     }
   });
 });

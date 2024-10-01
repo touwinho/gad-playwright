@@ -19,7 +19,7 @@ test.describe('Register new account (GUI)', { tag: '@gui' }, () => {
 
   const user: IUser = {
     firstname: faker.person.firstName(),
-    lastname: faker.person.lastName().replace(/-/g, ''),
+    lastname: faker.person.lastName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
     birthDate: faker.date.birthdate().toISOString().split('T')[0]
@@ -29,9 +29,7 @@ test.describe('Register new account (GUI)', { tag: '@gui' }, () => {
     browser = b;
     context = await browser.newContext();
     page = await context.newPage();
-  });
 
-  test.beforeEach(async () => {
     registerPage = new RegisterPage(page);
     loginPage = new LoginPage(page);
     welcomePage = new WelcomePage(page);

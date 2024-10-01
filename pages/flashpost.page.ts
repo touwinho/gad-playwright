@@ -1,4 +1,5 @@
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
+import { IFlashpost } from '@interfaces/flashpost';
 
 export class FlashpostPage {
   constructor(private page: Page) {}
@@ -14,16 +15,28 @@ export class FlashpostPage {
     name: 'Create',
     exact: true
   });
+  publicFlashpostIconClass = 'fa-solid fa-globe';
+  privateFlashpostIconClass = 'fa-solid fa-lock';
   formInput = this.page.locator('textarea[id="flashpost-text"]');
   isPublicCheckbox = this.page.locator('input[type="checkbox"]');
   colorPicker = this.page.locator('input[type="color"]');
   confirmationToast = this.page.getByTestId('dti-simple-alert');
-  newestFlashpost = this.page.locator('div.flashpost-message').first();
-  newestFlashPostPrivateIcon = this.newestFlashpost.locator('i.fa-lock');
-  newestFlashPostPublicIcon = this.newestFlashpost.locator('i.fa-globe');
-  deleteNewestFlashpostButton = this.page.locator('i.fa-trash-can').first();
 
-  async fillFlashpostForm(flashpost): Promise<void> {
+  locatePostByText(text: string): Locator {
+    return this.page.locator('div.flashpost-message', { hasText: text });
+  }
+
+  locateVisibilityIconByText(text: string): Locator {
+    return this.locatePostByText(text)
+      .locator('..')
+      .locator('.flashpost-visibility > i');
+  }
+
+  locateTrashIconByText(text: string): Locator {
+    return this.locatePostByText(text).locator('..').locator('i.fa-trash-can');
+  }
+
+  async fillFlashpostForm(flashpost: IFlashpost): Promise<void> {
     await this.formInput.fill(flashpost.body);
     await this.colorPicker.fill(flashpost.color);
 
