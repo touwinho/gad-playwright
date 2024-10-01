@@ -41,9 +41,7 @@ test.describe('Article operations (GUI)', { tag: '@gui' }, () => {
     browser = b;
     context = await browser.newContext();
     page = await context.newPage();
-  });
 
-  test.beforeEach(async () => {
     loginPage = new LoginPage(page);
     welcomePage = new WelcomePage(page);
     articlePage = new ArticlePage(page, article);
