@@ -1,11 +1,10 @@
 import { HeaderNavigation } from '@components/headerNavigation';
 import { faker } from '@faker-js/faker';
-import { IFlashpost } from '@interfaces/index';
-import { IUser } from '@interfaces/user';
+import { IFlashpost, IUser } from '@interfaces/index';
 import { LoginPage, WelcomePage, FlashpostPage } from '@pages/index';
 import { test, expect, Page, Browser, BrowserContext } from '@playwright/test';
 
-test.describe('Flashposts operations (GUI)', () => {
+test.describe('Flashposts operations (GUI)', { tag: '@gui' }, () => {
   test.describe.configure({ mode: 'serial' });
 
   let page: Page;
@@ -17,11 +16,11 @@ test.describe('Flashposts operations (GUI)', () => {
   let flashpostPage: FlashpostPage;
   let headerNavigation: HeaderNavigation;
 
-  if (!process.env.USER_EMAIL || !process.env.USER_PASSWORD) {
-    throw new Error(
-      'Missing environment variables: USER_EMAIL and/or USER_PASSWORD'
-    );
-  }
+  const user: IUser = {
+    email: process.env.USER_EMAIL,
+    password: process.env.USER_PASSWORD
+  };
+  let flashposts: IFlashpost[];
 
   test.beforeAll(async ({ browser: b }) => {
     browser = b;
@@ -47,28 +46,13 @@ test.describe('Flashposts operations (GUI)', () => {
         icon: flashpostPage.privateFlashpostIconClass
       }
     ];
+
+    loginPage.login(user);
   });
 
   test.afterAll(async () => {
     await page.close();
     await context.close();
-  });
-
-  const user: IUser = {
-    email: process.env.USER_EMAIL,
-    password: process.env.USER_PASSWORD
-  };
-
-  let flashposts: IFlashpost[];
-
-  test('should login on existing account', async () => {
-    await page.goto(loginPage.url);
-
-    await loginPage.fillForm(user);
-    await loginPage.submitButton.click();
-
-    await expect(page).toHaveURL(welcomePage.url);
-    await expect(page).toHaveTitle(welcomePage.title);
   });
 
   test('should create a new flashposts (public and private)', async () => {
