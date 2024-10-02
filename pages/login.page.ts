@@ -19,4 +19,9 @@ export class LoginPage {
   async submit(): Promise<void> {
     await this.submitButton.click();
   }
+
+  async login(user: IUser): Promise<void> {
+    await this.fillForm(user);
+    await this.submit();
+  }
 }

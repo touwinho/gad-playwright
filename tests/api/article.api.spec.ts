@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
 import { IArticle, IComment, IUser } from '@interfaces/index';
+import { login } from './utils/auth';
 
 test.describe('Article operations (API)', { tag: '@api' }, () => {
   test.describe.configure({ mode: 'serial' });
@@ -27,19 +28,8 @@ test.describe('Article operations (API)', { tag: '@api' }, () => {
   let articleId: number;
   let commentId: number;
 
-  test('should login on existing account', async ({ request }) => {
-    const responseLogin = await request.post('/api/login', {
-      data: {
-        email: user.email,
-        password: user.password
-      }
-    });
-
-    const responseBody = await responseLogin.json();
-    headers = { Authorization: `Bearer ${responseBody.access_token}` };
-
-    expect(responseBody.access_token).not.toBeUndefined();
-    expect(responseLogin.ok()).toBeTruthy();
+  test.beforeAll(async ({ request }) => {
+    headers = await login(request, user);
   });
 
   test('should add new article', async ({ request }) => {

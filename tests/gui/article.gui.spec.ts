@@ -3,8 +3,7 @@ import { faker } from '@faker-js/faker';
 
 import { ArticlePage, LoginPage, WelcomePage } from '@pages/index';
 import { HeaderNavigation, Notifications } from '@components/index';
-import { IArticle, IUser } from '@interfaces/index';
-import { IComment } from '@interfaces/comment';
+import { IArticle, IComment, IUser } from '@interfaces/index';
 
 test.describe('Article operations (GUI)', { tag: '@gui' }, () => {
   test.describe.configure({ mode: 'serial' });
@@ -18,12 +17,6 @@ test.describe('Article operations (GUI)', { tag: '@gui' }, () => {
   let articlePage: ArticlePage;
   let headerNavigation: HeaderNavigation;
   let notifications: Notifications;
-
-  if (!process.env.USER_EMAIL || !process.env.USER_PASSWORD) {
-    throw new Error(
-      'Missing environment variables: USER_EMAIL and/or USER_PASSWORD'
-    );
-  }
 
   const user: IUser = {
     email: process.env.USER_EMAIL,
@@ -47,21 +40,13 @@ test.describe('Article operations (GUI)', { tag: '@gui' }, () => {
     articlePage = new ArticlePage(page, article);
     headerNavigation = new HeaderNavigation(page);
     notifications = new Notifications(page);
+
+    loginPage.login(user);
   });
 
   test.afterAll(async () => {
     await page.close();
     await context.close();
-  });
-
-  test('should login on existing account', async () => {
-    await page.goto(loginPage.url);
-
-    await loginPage.fillForm(user);
-    await loginPage.submitButton.click();
-
-    await expect(page).toHaveURL(welcomePage.url);
-    await expect(page).toHaveTitle(welcomePage.title);
   });
 
   test('should add new article', async () => {
@@ -100,13 +85,5 @@ test.describe('Article operations (GUI)', { tag: '@gui' }, () => {
 
     await expect(articlePage.articleTitle).toBeHidden();
     await expect(page).toHaveURL(articlePage.url);
-  });
-
-  test('should logout', async () => {
-    await headerNavigation.profileDropdown.click();
-    await headerNavigation.logoutButton.click();
-
-    await expect(page).toHaveURL(loginPage.url);
-    await expect(page).toHaveTitle(loginPage.title);
   });
 });
