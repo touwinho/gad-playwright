@@ -7,7 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
-  reporter: 'html',
+  reporter: [['html'], [path.resolve(__dirname, './custom-reporter')]],
   use: {
     baseURL: 'http://127.0.0.1:3000',
     trace: 'on',
