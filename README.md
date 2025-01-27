@@ -27,27 +27,33 @@ Ensure that the GAD application is set up and running locally before proceeding 
 2. **Clone This Repository**
    Clone this test repository to your local machine.
 
-3. **Install Dependencies**
+3. **Install right Node.js version** Using nvm, proper Node version will be applied.
+
+   ```
+   nvm i
+   ```
+
+4. **Install Dependencies**
    Navigate to the test project directory and install the dependencies by running:
 
    ```
    npm install
    ```
 
-4. **Install Browsers**
+5. **Install Browsers**
    To run tests using Playwright, you need to install the required browsers. This command will download and set up the necessary browser binaries for testing:
 
    ```
    npx playwright install
    ```
 
-5. **Set Up GAD Application**
+6. **Set Up GAD Application**
    Visit the GAD application running on `localhost:3000` and create an account. This step is essential for running the tests.
 
-6. **Configure Environment Variables**
+7. **Configure Environment Variables**
    Create a `.env` file in the root directory of the test project. You can use the `.env.example` file as a template to set up the necessary environment variables.
 
-7. **Run the Tests**
+8. **Run the Tests**
    Execute the tests using Playwright with the following command:
 
    ```
